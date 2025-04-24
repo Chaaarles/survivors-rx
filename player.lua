@@ -15,7 +15,7 @@ function Player.new(x, y)
   return self
 end
 
-function Player:update(dt, input)
+function Player:update(dt, input, enemies)
   -- 1. Handle movement
   local dx, dy = 0, 0
   if input.left then dx = dx - 1 end
@@ -35,7 +35,19 @@ function Player:update(dt, input)
   -- 2. Handle shooting
   self.cooldown = self.cooldown - dt
   if self.cooldown <= 0 then
-    self:spawnBullet()
+    local closestEnemy = nil
+    local closestDistance = math.huge
+    for _, enemy in ipairs(enemies) do
+      local dx = enemy.x - self.x
+      local dy = enemy.y - self.y
+      local distance = math.sqrt(dx * dx + dy * dy)
+      if distance < closestDistance then
+        closestDistance = distance
+        closestEnemy = enemy
+      end
+    end
+
+    self:spawnBullet(closestEnemy)
     self.cooldown = self.cooldownTime
   end
 
@@ -60,17 +72,26 @@ function Player:draw()
   -- Draw bullets
   love.graphics.setColor(1, 0.8, 0.2)
   for _, b in ipairs(self.bullets) do
-    love.graphics.circle("fill", b.x, b.y, 4)
+    love.graphics.circle("fill", b.x, b.y, Config.bullet.radius)
   end
 end
 
-function Player:spawnBullet()
+function Player:spawnBullet(enemy)
+  if not enemy then return end
+  local dx = enemy.x - self.x
+  local dy = enemy.y - self.y
+  local distance = math.sqrt(dx * dx + dy * dy)
+  if distance > 0 then
+    dx = dx / distance
+    dy = dy / distance
+  end
+
   local bullet = {
     x = self.x,
     y = self.y,
-    vx = 0,
-    vy = -320,
-    life = 2,
+    vx = dx * Config.bullet.speed,
+    vy = dy * Config.bullet.speed,
+    life = Config.bullet.life,
   }
   table.insert(self.bullets, bullet)
 end

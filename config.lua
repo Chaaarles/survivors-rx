@@ -11,6 +11,12 @@ local Config = {
     cooldownTime = 0.4,
   },
 
+  bullet = {
+    radius = 4,
+    speed  = 300,
+    life   = 1,
+  },
+
   enemy = {
     radius = 20,
     speed  = 50,

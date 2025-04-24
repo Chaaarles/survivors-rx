@@ -23,7 +23,7 @@ end
 
 function love.update(dt)
   Input.update()
-  player:update(dt, Input)
+  player:update(dt, Input, enemies)
   for _, enemy in ipairs(enemies) do
     enemy:update(dt, player)
   end
