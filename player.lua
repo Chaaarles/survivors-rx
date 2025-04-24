@@ -1,3 +1,5 @@
+local Config = require "config"
+
 local Player = {}
 Player.__index = Player
 
@@ -5,9 +7,9 @@ Player.__index = Player
 function Player.new(x, y)
   local self        = setmetatable({}, Player)
   self.x, self.y    = x, y
-  self.radius       = 12
-  self.speed        = 180
-  self.cooldownTime = 0.4
+  self.radius       = Config.player.radius
+  self.speed        = Config.player.speed
+  self.cooldownTime = Config.player.cooldownTime
   self.cooldown     = 0
   self.bullets      = {}
   return self

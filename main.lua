@@ -1,12 +1,13 @@
+local Config = require "config"
 local Player = require "player"
-local Input  = require "player.input"
+local Input  = require "input"
 
 local player
 
 function love.load()
-  love.window.setMode(800, 600, { resizable = false, vsync = true })
+  love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
   player = Player.new(400, 300)
-  love.window.setTitle("SurvivorsRX")
+  love.window.setTitle(Config.window.title)
 end
 
 function love.update(dt)
