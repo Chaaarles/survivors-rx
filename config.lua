@@ -10,6 +10,11 @@ local Config = {
     speed        = 180,
     cooldownTime = 0.4,
   },
+
+  enemy = {
+    radius = 20,
+    speed  = 50,
+  },
 }
 
 return Config
