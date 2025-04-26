@@ -19,7 +19,7 @@ function love.load()
   love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
   love.window.setTitle(Config.window.title)
 
-  world = World.getInstance()
+  world = World.new()
 
   player = Player.new(400, 300)
   world:setPlayer(player)
@@ -62,5 +62,9 @@ end
 function love.keypressed(key)
   if key == "escape" then
     love.event.quit()
+  end
+
+  if key == "r" then
+    love.load()
   end
 end
