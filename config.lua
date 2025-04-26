@@ -18,8 +18,9 @@ local Config = {
   },
 
   enemy = {
-    radius = 20,
+    radius = 8,
     speed  = 50,
+    health = 5,
   },
 }
 

@@ -1,39 +1,62 @@
-local Config  = require "config"
-local Player  = require "player"
-local Input   = require "input"
-local Enemy   = require "enemy"
+local Config     = require "config"
+local Input      = require "input"
+local Player     = require "entities.player"
+local Enemy      = require "entities.enemy"
+local Bullet     = require "entities.bullet"
+local Collisions = require "systems.collisions"
+local World      = require "world"
 
 local player
-local enemies = {}
+local world
+
+function SpawnEnemy(x, y)
+  local enemy = Enemy.new(x, y)
+  world:add(enemy)
+end
 
 function love.load()
   math.randomseed(os.time())
   love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
-  player = Player.new(400, 300)
+  love.window.setTitle(Config.window.title)
 
-  for i = 1, 5 do
+  world = World.getInstance()
+
+  player = Player.new(400, 300)
+  world:setPlayer(player)
+
+  for i = 1, 100 do
     local x = math.random(0, Config.window.width)
     local y = math.random(0, Config.window.height)
-    local enemy = Enemy.new(x, y)
-    table.insert(enemies, enemy)
+    SpawnEnemy(x, y)
   end
-
-  love.window.setTitle(Config.window.title)
 end
 
 function love.update(dt)
   Input.update()
-  player:update(dt, Input, enemies)
-  for _, enemy in ipairs(enemies) do
-    enemy:update(dt, player)
+  for _, entity in ipairs(world.entities) do
+    entity:update(dt)
+  end
+
+  -- Check for collisions
+  Collisions.run(world.entities)
+
+  -- Remove entities marked for removal
+  for i = #world.entities, 1, -1 do
+    local entity = world.entities[i]
+    if entity.removal then
+      table.remove(world.entities, i)
+    end
   end
 end
 
 function love.draw()
-  player:draw()
-  for _, enemy in ipairs(enemies) do
-    enemy:draw()
+  for _, entity in ipairs(world.entities) do
+    entity:draw()
   end
+
+  love.graphics.setColor(1, 1, 1)
+  love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
+  love.graphics.print("entities: " .. #world.entities, 10, 30)
 end
 
 function love.keypressed(key)
