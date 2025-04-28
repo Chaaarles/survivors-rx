@@ -30,13 +30,22 @@ end
 World.__tostring = function(self)
   local str = "World contents:\n"
   if self.player then
-    str = str .. string.format(" - Player at (%.2f, %.2f)\n", self.player.x, self.player.y)
+    str = str .. string.format(" - Player at (%.2f, %.2f)\n", self.player.pos.x, self.player.pos.y)
   else
     str = str .. " - No player set\n"
   end
+
   for _, entity in ipairs(self.entities) do
-    str = str .. string.format(" - %s at (%.2f, %.2f)\n", entity.tag, entity.x, entity.y)
+    if (not entity.tag) then
+      str = str .. " - No tag\n"
+    elseif (not entity.pos) then
+      str = str .. string.format(" - %s at no_pos\n", entity.tag)
+    else
+      str = str ..
+          string.format(" - %s at (%.2f, %.2f)\n", entity.tag, entity.pos.x, entity.pos.y)
+    end
   end
+
   return str
 end
 

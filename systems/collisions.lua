@@ -3,8 +3,8 @@ local Config = require "config"
 local Collisions = {}
 
 --- Check if two circles overlap
----@param a {x: number,y: number,radius: number} Circle A
----@param b {x: number,y: number,radius: number} Circle B
+---@param a {x: number, y: number, radius: number} Circle A
+---@param b {x: number, y: number, radius: number} Circle B
 local function circlesOverlap(a, b)
   local dx = b.x - a.x
   local dy = b.y - a.y
@@ -14,12 +14,12 @@ local function circlesOverlap(a, b)
 end
 
 ---Calculate the movement of two objects based on their collision
----@param a {x: number,y: number,radius: number} Circle A
----@param b {x: number,y: number,radius: number} Circle B
+---@param a {pos: {x: number,y: number},collider: {radius: number}} Circle A
+---@param b {pos: {x: number,y: number},collider: {radius: number}} Circle B
 ---@param ratio number How much to move circle A. 0 = move B, 1 = move A, 0.5 = move both equally
 local function moveColliders(a, b, ratio)
-  local dx = b.x - a.x
-  local dy = b.y - a.y
+  local dx = b.pos.x - a.pos.x
+  local dy = b.pos.y - a.pos.y
   local dist2 = dx * dx + dy * dy
 
   if dist2 == 0 then
@@ -27,15 +27,15 @@ local function moveColliders(a, b, ratio)
   end
 
   local distance = math.sqrt(dist2)
-  local overlap = a.radius + b.radius - distance
+  local overlap = a.collider.radius + b.collider.radius - distance
 
   if overlap > 0 then
     local moveX = (dx / distance) * overlap
     local moveY = (dy / distance) * overlap
-    a.x = a.x - moveX * ratio
-    a.y = a.y - moveY * ratio
-    b.x = b.x + moveX * (1 - ratio)
-    b.y = b.y + moveY * (1 - ratio)
+    a.pos.x = a.pos.x - moveX * ratio
+    a.pos.y = a.pos.y - moveY * ratio
+    b.pos.x = b.pos.x + moveX * (1 - ratio)
+    b.pos.y = b.pos.y + moveY * (1 - ratio)
   end
 end
 
@@ -54,7 +54,7 @@ local Matrix = {
 local Handlers = {
   playerEnemy = function(a, b)
     -- Move the enemy out of the way
-    moveColliders(a, b, 0)
+    moveColliders(a, b, 0.1)
   end,
   enemyEnemy = function(a, b)
     -- Move the enemies apart
@@ -66,15 +66,15 @@ local Handlers = {
     b:hurt()
 
     -- Give the enemy some knockback
-    local dx = b.x - a.x
-    local dy = b.y - a.y
+    local dx = b.pos.x - a.pos.x
+    local dy = b.pos.y - a.pos.y
     local distance = math.sqrt(dx * dx + dy * dy)
     if distance > 0 then
       dx = dx / distance
       dy = dy / distance
     end
-    b.x = b.x + dx * 15
-    b.y = b.y + dy * 15
+    b.pos.x = b.pos.x + dx * 15
+    b.pos.y = b.pos.y + dy * 15
   end,
 }
 
@@ -98,12 +98,22 @@ end
 function Collisions.run(objects)
   for i = 1, #objects - 1 do
     local a = objects[i]
+    if not a.collider then
+      goto continue
+    end
+
     for j = i + 1, #objects do
       local b = objects[j]
-      if (circlesOverlap(a, b)) then
+      if not b.collider then
+        goto inner
+      end
+
+      if (circlesOverlap({ x = a.pos.x, y = a.pos.y, radius = a.collider.radius }, { x = b.pos.x, y = b.pos.y, radius = b.collider.radius })) then
         dispatch(a, b)
       end
+      ::inner::
     end
+    ::continue::
   end
 end
 

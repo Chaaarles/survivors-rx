@@ -2,16 +2,20 @@ local Config = require "config"
 local Input = require "input"
 local World = require "world"
 local Bullet = require "entities.bullet"
+local Collider = require "components.collider"
+local Entity = require "entities.entity"
+local Position = require "components.position"
 
 local Player = {}
 Player.__index = Player
 
-
 function Player.new(x, y)
-  local self        = setmetatable({}, Player)
-  self.tag          = "player"
-  self.x, self.y    = x, y
-  self.radius       = Config.player.radius
+  local self = Entity.new("player")
+      :add(Position.new(x, y))
+      :add(Collider.circle(Config.player.radius))
+
+  setmetatable(self, Player)
+
   self.speed        = Config.player.speed
   self.cooldownTime = Config.player.cooldownTime
   self.cooldown     = 0
@@ -33,8 +37,8 @@ function Player:update(dt)
     dy = dy * normalizeFactor
   end
 
-  self.x = self.x + dx * self.speed * dt
-  self.y = self.y + dy * self.speed * dt
+  self.pos.x = self.pos.x + dx * self.speed * dt
+  self.pos.y = self.pos.y + dy * self.speed * dt
 
 
   -- 2. Handle shooting
@@ -46,8 +50,8 @@ function Player:update(dt)
       if enemy.tag ~= "enemy" then
         goto continue
       end
-      local dx = enemy.x - self.x
-      local dy = enemy.y - self.y
+      local dx = enemy.pos.x - self.pos.x
+      local dy = enemy.pos.y - self.pos.y
       local distance = math.sqrt(dx * dx + dy * dy)
       if distance < closestDistance then
         closestDistance = distance
@@ -64,13 +68,13 @@ end
 function Player:draw()
   -- Draw player
   love.graphics.setColor(0.9, 0.9, 1)
-  love.graphics.circle("fill", self.x, self.y, self.radius)
+  love.graphics.circle("fill", self.pos.x, self.pos.y, self.collider.radius)
 end
 
 function Player:spawnBullet(enemy)
   if not enemy then return end
 
-  local bullet = Bullet.new(self.x, self.y, enemy)
+  local bullet = Bullet.new(self.pos.x, self.pos.y, enemy.pos)
   self.world:add(bullet)
 end
 

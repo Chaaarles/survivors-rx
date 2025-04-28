@@ -1,18 +1,13 @@
-local Config     = require "config"
-local Input      = require "input"
-local Player     = require "entities.player"
-local Enemy      = require "entities.enemy"
-local Bullet     = require "entities.bullet"
-local Collisions = require "systems.collisions"
-local World      = require "world"
+local Config       = require "config"
+local Input        = require "input"
+local Player       = require "entities.player"
+local Collisions   = require "systems.collisions"
+local World        = require "world"
+local EnemySpawner = require "systems.enemySpawner"
 
 local player
 local world
-
-function SpawnEnemy(x, y)
-  local enemy = Enemy.new(x, y)
-  world:add(enemy)
-end
+local enemySpawner
 
 function love.load()
   math.randomseed(os.time())
@@ -24,11 +19,7 @@ function love.load()
   player = Player.new(400, 300)
   world:setPlayer(player)
 
-  for i = 1, 100 do
-    local x = math.random(0, Config.window.width)
-    local y = math.random(0, Config.window.height)
-    SpawnEnemy(x, y)
-  end
+  enemySpawner = EnemySpawner.new(world)
 end
 
 function love.update(dt)
@@ -36,6 +27,9 @@ function love.update(dt)
   for _, entity in ipairs(world.entities) do
     entity:update(dt)
   end
+
+  -- Run enemy spawner
+  enemySpawner:update(dt)
 
   -- Check for collisions
   Collisions.run(world.entities)

@@ -18,9 +18,11 @@ local Config = {
   },
 
   enemy = {
-    radius = 8,
-    speed  = 50,
-    health = 5,
+    radius        = 8,
+    speed         = 50,
+    health        = 5,
+    spawnInterval = 1.5,
+    spawnCount    = 5,
   },
 }
 

@@ -1,17 +1,19 @@
 local Config = require "config"
 local World = require "world"
+local Collider = require "components.collider"
+local Entity = require "entities.entity"
+local Position = require "components.position"
 
 local Enemy = {}
 Enemy.__index = Enemy
 
 
 function Enemy.new(x, y)
-  local self     = setmetatable({}, Enemy)
-  self.tag       = "enemy"
-  self.x, self.y = x, y
-  self.radius    = Config.enemy.radius
-  self.speed     = Config.enemy.speed
-  self.health    = Config.enemy.health
+  local self = Entity.new("enemy"):add(Position.new(x, y)):add(Collider.circle(Config.enemy.radius))
+  setmetatable(self, Enemy)
+
+  self.speed  = Config.enemy.speed
+  self.health = Config.enemy.health
   return self
 end
 
@@ -27,8 +29,8 @@ end
 
 function Enemy:update(dt)
   local world = World.getInstance()
-  local dx = world.player.x - self.x
-  local dy = world.player.y - self.y
+  local dx = world.player.pos.x - self.pos.x
+  local dy = world.player.pos.y - self.pos.y
   local distance = math.sqrt(dx * dx + dy * dy)
 
   if distance > 0 then
@@ -36,8 +38,8 @@ function Enemy:update(dt)
     dy = dy / distance
   end
 
-  self.x = self.x + dx * self.speed * dt
-  self.y = self.y + dy * self.speed * dt
+  self.pos.x = self.pos.x + dx * self.speed * dt
+  self.pos.y = self.pos.y + dy * self.speed * dt
 
   if self.hurtAnimation then
     self.hurtTime = self.hurtTime - dt
@@ -49,11 +51,11 @@ end
 
 function Enemy:draw()
   love.graphics.setColor(1, 0.5, 0.5)
-  love.graphics.circle("fill", self.x, self.y, self.radius)
+  love.graphics.circle("fill", self.pos.x, self.pos.y, self.collider.radius)
 
   if self.hurtAnimation then
     love.graphics.setColor(1, 0, 0)
-    love.graphics.circle("fill", self.x, self.y, self.radius * 1.2)
+    love.graphics.circle("fill", self.pos.x, self.pos.y, self.collider.radius * 1.2)
     love.graphics.setColor(1, 0.5, 0.5)
   end
 end
