@@ -6,7 +6,7 @@ local EnemySpawner = {}
 EnemySpawner.__index = EnemySpawner
 
 function EnemySpawner.new(world)
-  local self = setmetatable(Entity.new("EnemySpawner"), EnemySpawner)
+  local self = setmetatable({}, EnemySpawner)
   self.world = world
   self.spawnCount = Config.enemy.spawnCount
   self.spawnInterval = Config.enemy.spawnInterval
