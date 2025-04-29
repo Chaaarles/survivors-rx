@@ -7,7 +7,9 @@ local Config = {
 
   player = {
     radius       = 12,
-    speed        = 180,
+    speed        = 300,
+    acceleration = 200,
+    friction     = 0.15,
     cooldownTime = 0.4,
   },
 

@@ -1,13 +1,19 @@
-local Config       = require "config"
-local Input        = require "input"
-local Player       = require "entities.player"
-local Collisions   = require "systems.collisions"
-local World        = require "world"
-local EnemySpawner = require "systems.enemySpawner"
+local Config             = require "config"
+local Input              = require "input"
+local Player             = require "entities.player"
+local Collisions         = require "systems.collisions"
+local World              = require "world"
+local EnemySpawner       = require "systems.enemySpawner"
+
+Tiny                     = require "lib.tiny"
+local TinyPlayer         = require "entities.tiny_player"
 
 local player
 local world
 local enemySpawner
+local tinyWorld
+local drawSystemFilter   = Tiny.requireAll("isDrawingSystem")
+local updateSystemFilter = Tiny.rejectAll("isDrawingSystem")
 
 function love.load()
   math.randomseed(os.time())
@@ -15,11 +21,17 @@ function love.load()
   love.window.setTitle(Config.window.title)
 
   world = World.new()
+  tinyWorld = Tiny.world(
+    require("systems.draw_system"),
+    require("systems.player_controller_system"),
+    require("systems.velocity_system"),
+    require("systems.friction_system")
+  )
 
-  player = Player.new(400, 300)
-  world:setPlayer(player)
+  player = TinyPlayer.new(400, 300)
+  tinyWorld:add(player)
 
-  enemySpawner = EnemySpawner.new(world)
+  --enemySpawner = EnemySpawner.new(world)
 end
 
 function love.update(dt)
@@ -29,7 +41,7 @@ function love.update(dt)
   end
 
   -- Run enemy spawner
-  enemySpawner:update(dt)
+  --enemySpawner:update(dt)
 
   -- Check for collisions
   Collisions.run(world.entities)
@@ -41,12 +53,18 @@ function love.update(dt)
       table.remove(world.entities, i)
     end
   end
+
+  -- Update Tiny world
+  tinyWorld:update(dt, updateSystemFilter)
 end
 
 function love.draw()
   for _, entity in ipairs(world.entities) do
     entity:draw()
   end
+
+  -- Draw Tiny world
+  tinyWorld:update(love.timer.getDelta, drawSystemFilter)
 
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
