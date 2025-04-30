@@ -1,6 +1,6 @@
-local Config = require "config"
+local CollisionSystem = Tiny.system()
+CollisionSystem.filter = Tiny.requireAll('pos', 'collider')
 
-local Collisions = {}
 
 --- Check if two circles overlap
 ---@param a {x: number, y: number, radius: number} Circle A
@@ -13,10 +13,6 @@ local function circlesOverlap(a, b)
   return distanceSquared < radiusSum * radiusSum
 end
 
----Calculate the movement of two objects based on their collision
----@param a {pos: {x: number,y: number},collider: {radius: number}} Circle A
----@param b {pos: {x: number,y: number},collider: {radius: number}} Circle B
----@param ratio number How much to move circle A. 0 = move B, 1 = move A, 0.5 = move both equally
 local function moveColliders(a, b, ratio)
   local dx = b.pos.x - a.pos.x
   local dy = b.pos.y - a.pos.y
@@ -36,6 +32,11 @@ local function moveColliders(a, b, ratio)
     a.pos.y = a.pos.y - moveY * ratio
     b.pos.x = b.pos.x + moveX * (1 - ratio)
     b.pos.y = b.pos.y + moveY * (1 - ratio)
+
+    a.vel.x = a.vel.x - moveX * ratio * 100
+    a.vel.y = a.vel.y - moveY * ratio * 100
+    b.vel.x = b.vel.x + moveX * (1 - ratio) * 100
+    b.vel.y = b.vel.y + moveY * (1 - ratio) * 100
   end
 end
 
@@ -54,7 +55,7 @@ local Matrix = {
 local Handlers = {
   playerEnemy = function(a, b)
     -- Move the enemy out of the way
-    moveColliders(a, b, 0.1)
+    moveColliders(a, b, 0.2)
   end,
   enemyEnemy = function(a, b)
     -- Move the enemies apart
@@ -79,42 +80,34 @@ local Handlers = {
 }
 
 local function dispatch(a, b)
-  local row = Matrix[a.tag]
-  local rule = row and row[b.tag]
+  local row = Matrix[a.collider.tag]
+  local rule = row and row[b.collider.tag]
 
   if rule then
     Handlers[rule](a, b)
     return
   end
 
-  local reverseRow = Matrix[b.tag]
-  local reverseRule = reverseRow and reverseRow[a.tag]
+  local reverseRow = Matrix[b.collider.tag]
+  local reverseRule = reverseRow and reverseRow[a.collider.tag]
   if reverseRule then
     Handlers[reverseRule](b, a)
     return
   end
 end
 
-function Collisions.run(objects)
+function CollisionSystem:update(dt)
+  local objects = self.entities
+
   for i = 1, #objects - 1 do
     local a = objects[i]
-    if not a.collider then
-      goto continue
-    end
-
     for j = i + 1, #objects do
       local b = objects[j]
-      if not b.collider then
-        goto inner
-      end
-
       if (circlesOverlap({ x = a.pos.x, y = a.pos.y, radius = a.collider.radius }, { x = b.pos.x, y = b.pos.y, radius = b.collider.radius })) then
         dispatch(a, b)
       end
-      ::inner::
     end
-    ::continue::
   end
 end
 
-return Collisions
+return CollisionSystem

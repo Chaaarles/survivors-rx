@@ -27,6 +27,7 @@ function love.load()
     require("systems.enemy_velocity_clamp_system"),
     require("systems.velocity_system"),
     require("systems.friction_system"),
+    require("systems.collision_system"),
     require("systems.draw_system")
   )
 
