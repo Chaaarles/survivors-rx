@@ -1,13 +1,13 @@
-local Config             = require "config"
-local Input              = require "input"
-local Collisions         = require "systems.collisions"
-local World              = require "world"
+local Config           = require "config"
+local Input            = require "input"
+local Collisions       = require "systems.collisions"
+local World            = require "world"
 
-Tiny                     = require "lib.tiny"
-local TinyPlayer         = require "entities.tiny_player"
-local TinyEnemySpawner   = require "entities.tiny_enemy_spawner"
+Tiny                   = require "lib.tiny"
+local TinyPlayer       = require "entities.tiny_player"
+local TinyEnemySpawner = require "entities.tiny_enemy_spawner"
 
-local player
+
 local world
 local enemySpawner
 local tinyWorld
@@ -21,15 +21,17 @@ function love.load()
 
   world = World.new()
   tinyWorld = Tiny.world(
+    require("systems.enemy_spawner_system"),
     require("systems.player_controller_system"),
+    require("systems.enemy_controller_system"),
+    require("systems.enemy_velocity_clamp_system"),
     require("systems.velocity_system"),
     require("systems.friction_system"),
-    require("systems.enemy_spawner_system"),
     require("systems.draw_system")
   )
 
-  player = TinyPlayer.new(400, 300)
-  tinyWorld:add(player)
+  PLAYER = TinyPlayer.new(400, 300)
+  tinyWorld:add(PLAYER)
 
   local enemySpawner = TinyEnemySpawner.new()
   tinyWorld:add(enemySpawner)
