@@ -1,15 +1,12 @@
+Tiny                   = require "lib.tiny"
+
 local Config           = require "config"
 local Input            = require "input"
-local Collisions       = require "systems.collisions"
-local World            = require "world"
 
-Tiny                   = require "lib.tiny"
 local TinyPlayer       = require "entities.tiny_player"
 local TinyEnemySpawner = require "entities.tiny_enemy_spawner"
 
 
-local world
-local enemySpawner
 local tinyWorld
 local drawSystemFilter   = Tiny.requireAll("isDrawingSystem")
 local updateSystemFilter = Tiny.rejectAll("isDrawingSystem")
@@ -19,7 +16,6 @@ function love.load()
   love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
   love.window.setTitle(Config.window.title)
 
-  world = World.new()
   tinyWorld = Tiny.world(
     require("systems.enemy_spawner_system"),
     require("systems.player_controller_system"),
@@ -40,33 +36,12 @@ end
 
 function love.update(dt)
   Input.update()
-  for _, entity in ipairs(world.entities) do
-    entity:update(dt)
-  end
-
-  -- Run enemy spawner
-  --enemySpawner:update(dt)
-
-  -- Check for collisions
-  Collisions.run(world.entities)
-
-  -- Remove entities marked for removal
-  for i = #world.entities, 1, -1 do
-    local entity = world.entities[i]
-    if entity.removal then
-      table.remove(world.entities, i)
-    end
-  end
 
   -- Update Tiny world
   tinyWorld:update(dt, updateSystemFilter)
 end
 
 function love.draw()
-  for _, entity in ipairs(world.entities) do
-    entity:draw()
-  end
-
   -- Draw Tiny world
   tinyWorld:update(love.timer.getDelta, drawSystemFilter)
 
