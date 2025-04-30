@@ -1,12 +1,11 @@
 local Config             = require "config"
 local Input              = require "input"
-local Player             = require "entities.player"
 local Collisions         = require "systems.collisions"
 local World              = require "world"
-local EnemySpawner       = require "systems.enemySpawner"
 
 Tiny                     = require "lib.tiny"
 local TinyPlayer         = require "entities.tiny_player"
+local TinyEnemySpawner   = require "entities.tiny_enemy_spawner"
 
 local player
 local world
@@ -22,16 +21,18 @@ function love.load()
 
   world = World.new()
   tinyWorld = Tiny.world(
-    require("systems.draw_system"),
     require("systems.player_controller_system"),
     require("systems.velocity_system"),
-    require("systems.friction_system")
+    require("systems.friction_system"),
+    require("systems.enemy_spawner_system"),
+    require("systems.draw_system")
   )
 
   player = TinyPlayer.new(400, 300)
   tinyWorld:add(player)
 
-  --enemySpawner = EnemySpawner.new(world)
+  local enemySpawner = TinyEnemySpawner.new()
+  tinyWorld:add(enemySpawner)
 end
 
 function love.update(dt)
@@ -68,7 +69,8 @@ function love.draw()
 
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
-  love.graphics.print("entities: " .. #world.entities, 10, 30)
+  love.graphics.print("entities: " .. Tiny.getEntityCount(tinyWorld), 10, 30)
+  love.graphics.print("systems: " .. Tiny.getSystemCount(tinyWorld), 10, 50)
 end
 
 function love.keypressed(key)
