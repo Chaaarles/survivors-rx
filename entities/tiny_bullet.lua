@@ -5,6 +5,7 @@ Bullet.__index = Bullet
 
 function Bullet.new(x, y, angle)
   local self = setmetatable({}, Bullet)
+  self.id = NewId()
   self.bullet = true
   self.pos = { x = x, y = y }
   self.vel = { x = math.cos(angle) * Config.bullet.speed, y = math.sin(angle) * Config.bullet.speed }
@@ -14,7 +15,11 @@ function Bullet.new(x, y, angle)
 end
 
 function Bullet:draw()
-  love.graphics.setColor(1, 0.8, 0)
+  love.graphics.setColor(0.1, 0.1, 0.1)
+  love.graphics.setLineWidth(6)
+  love.graphics.setLineStyle("rough")
+  love.graphics.circle('line', self.pos.x, self.pos.y, self.collider.radius)
+  love.graphics.setColor(1, 1, 0)
   love.graphics.circle("fill", self.pos.x, self.pos.y, self.collider.radius)
 end
 

@@ -1,15 +1,15 @@
 local CollisionSystem = Tiny.system()
 CollisionSystem.filter = Tiny.requireAll('pos', 'collider')
 
+local SpatialHash = require('spatial_hash')
+local hash = SpatialHash.new(48) -- 64x64 cells
 
 --- Check if two circles overlap
----@param a {x: number, y: number, radius: number} Circle A
----@param b {x: number, y: number, radius: number} Circle B
 local function circlesOverlap(a, b)
-  local dx = b.x - a.x
-  local dy = b.y - a.y
+  local dx = b.pos.x - a.pos.x
+  local dy = b.pos.y - a.pos.y
   local distanceSquared = dx * dx + dy * dy
-  local radiusSum = a.radius + b.radius
+  local radiusSum = a.collider.radius + b.collider.radius
   return distanceSquared < radiusSum * radiusSum
 end
 
@@ -55,7 +55,7 @@ local Matrix = {
 local Handlers = {
   playerEnemy = function(a, b, world)
     -- Move the enemy out of the way
-    moveColliders(a, b, 0.2)
+    moveColliders(a, b, 0.05)
   end,
   enemyEnemy = function(a, b, world)
     -- Move the enemies apart
@@ -86,15 +86,33 @@ local function dispatch(a, b, world)
 end
 
 function CollisionSystem:update(dt)
-  local objects = self.entities
+  hash:clear()
 
-  for i = 1, #objects - 1 do
-    local a = objects[i]
-    for j = i + 1, #objects do
-      local b = objects[j]
-      if (circlesOverlap({ x = a.pos.x, y = a.pos.y, radius = a.collider.radius }, { x = b.pos.x, y = b.pos.y, radius = b.collider.radius })) then
-        dispatch(a, b, self.world)
+  for i = 1, #self.entities do
+    hash:insert(self.entities[i])
+  end
+
+
+  for i = 1, #self.entities do
+    local a = self.entities[i]
+    local buckets, m = hash:bucketsFor(a)
+    for bucketIndex = 1, m do
+      local bucket = buckets[bucketIndex]
+      if not bucket then
+        goto skip_bucket
       end
+
+      for j = 1, bucket.n do
+        local b = bucket[j]
+        if b ~= a
+            and a.id < b.id
+            and (circlesOverlap(a, b))
+        then
+          dispatch(a, b, self.world)
+        end
+      end
+
+      ::skip_bucket::
     end
   end
 end

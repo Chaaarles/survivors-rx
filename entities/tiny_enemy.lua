@@ -4,6 +4,7 @@ Enemy.__index = Enemy
 
 function Enemy.new(x, y)
   local self = setmetatable({}, Enemy)
+  self.id = NewId()
   self.enemy = true
   self.pos = { x = x, y = y }
   self.vel = { x = 0, y = 0 }

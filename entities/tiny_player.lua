@@ -4,6 +4,7 @@ Player.__index = Player
 
 function Player.new(x, y)
   local self = setmetatable({}, Player)
+  self.id = NewId()
   self.playerController = true;
   self.pos = { x = x, y = y }
   self.vel = { x = 0, y = 0 }

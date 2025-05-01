@@ -12,6 +12,12 @@ local tinyWorld
 local drawSystemFilter   = Tiny.requireAll("isDrawingSystem")
 local updateSystemFilter = Tiny.rejectAll("isDrawingSystem")
 
+GLOBAL_ID                = 0
+function NewId()
+  GLOBAL_ID = GLOBAL_ID + 1
+  return GLOBAL_ID
+end
+
 function love.load()
   math.randomseed(os.time())
   love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
@@ -51,6 +57,7 @@ function love.update(dt)
 end
 
 function love.draw()
+  love.graphics.clear(0.6, 0.8, 0.5)
   -- Draw Tiny world
   tinyWorld:update(love.timer.getDelta, drawSystemFilter)
 
