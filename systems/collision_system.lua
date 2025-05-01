@@ -33,10 +33,10 @@ local function moveColliders(a, b, ratio)
     b.pos.x = b.pos.x + moveX * (1 - ratio)
     b.pos.y = b.pos.y + moveY * (1 - ratio)
 
-    a.vel.x = a.vel.x - moveX * ratio * 100
-    a.vel.y = a.vel.y - moveY * ratio * 100
-    b.vel.x = b.vel.x + moveX * (1 - ratio) * 100
-    b.vel.y = b.vel.y + moveY * (1 - ratio) * 100
+    a.vel.x = a.vel.x - moveX * ratio * 10
+    a.vel.y = a.vel.y - moveY * ratio * 10
+    b.vel.x = b.vel.x + moveX * (1 - ratio) * 10
+    b.vel.y = b.vel.y + moveY * (1 - ratio) * 10
   end
 end
 
@@ -53,45 +53,34 @@ local Matrix = {
 }
 
 local Handlers = {
-  playerEnemy = function(a, b)
+  playerEnemy = function(a, b, world)
     -- Move the enemy out of the way
     moveColliders(a, b, 0.2)
   end,
-  enemyEnemy = function(a, b)
+  enemyEnemy = function(a, b, world)
     -- Move the enemies apart
     moveColliders(a, b, 0.5)
   end,
-  bulletEnemy = function(a, b)
+  bulletEnemy = function(a, b, world)
     -- Handle bullet and enemy collision
-    a:hit()
-    b:hurt()
-
-    -- Give the enemy some knockback
-    local dx = b.pos.x - a.pos.x
-    local dy = b.pos.y - a.pos.y
-    local distance = math.sqrt(dx * dx + dy * dy)
-    if distance > 0 then
-      dx = dx / distance
-      dy = dy / distance
-    end
-    b.pos.x = b.pos.x + dx * 15
-    b.pos.y = b.pos.y + dy * 15
+    b.hitBy.x, b.hitBy.y = a.vel.x, a.vel.y
+    Tiny.removeEntity(world, a) -- Remove the bullet entity
   end,
 }
 
-local function dispatch(a, b)
+local function dispatch(a, b, world)
   local row = Matrix[a.collider.tag]
   local rule = row and row[b.collider.tag]
 
   if rule then
-    Handlers[rule](a, b)
+    Handlers[rule](a, b, world)
     return
   end
 
   local reverseRow = Matrix[b.collider.tag]
   local reverseRule = reverseRow and reverseRow[a.collider.tag]
   if reverseRule then
-    Handlers[reverseRule](b, a)
+    Handlers[reverseRule](b, a, world)
     return
   end
 end
@@ -104,7 +93,7 @@ function CollisionSystem:update(dt)
     for j = i + 1, #objects do
       local b = objects[j]
       if (circlesOverlap({ x = a.pos.x, y = a.pos.y, radius = a.collider.radius }, { x = b.pos.x, y = b.pos.y, radius = b.collider.radius })) then
-        dispatch(a, b)
+        dispatch(a, b, self.world)
       end
     end
   end

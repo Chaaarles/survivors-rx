@@ -5,6 +5,7 @@ local Input            = require "input"
 
 local TinyPlayer       = require "entities.tiny_player"
 local TinyEnemySpawner = require "entities.tiny_enemy_spawner"
+local Gun              = require "entities.gun"
 
 
 local tinyWorld
@@ -18,17 +19,25 @@ function love.load()
 
   tinyWorld = Tiny.world(
     require("systems.enemy_spawner_system"),
+    require("systems.difficulty_system"),
     require("systems.player_controller_system"),
+    require("systems.gun_system"),
     require("systems.enemy_controller_system"),
     require("systems.enemy_velocity_clamp_system"),
     require("systems.velocity_system"),
     require("systems.friction_system"),
     require("systems.collision_system"),
+    require("systems.enemy_hit_system"),
+    require("systems.hit_state_system"),
+    require("systems.bullet_removal_system"),
     require("systems.draw_system")
   )
 
   PLAYER = TinyPlayer.new(400, 300)
   tinyWorld:add(PLAYER)
+
+  local gun = Gun.new()
+  tinyWorld:add(gun)
 
   local enemySpawner = TinyEnemySpawner.new()
   tinyWorld:add(enemySpawner)
@@ -57,6 +66,9 @@ function love.keypressed(key)
   end
 
   if key == "r" then
+    Tiny.clearEntities(tinyWorld)
+    Tiny.clearSystems(tinyWorld)
+    Tiny.refresh(tinyWorld)
     love.load()
   end
 end

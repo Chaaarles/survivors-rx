@@ -9,6 +9,7 @@ function EnemySpawner.new()
   self.spawnCount = Config.enemy.spawnCount
   self.spawnInterval = Config.enemy.spawnInterval
   self.spawnTimer = 0
+  self.difficultyTimer = 0
   return self
 end
 

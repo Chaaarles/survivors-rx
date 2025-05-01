@@ -13,9 +13,13 @@ local Config = {
     cooldownTime = 0.4,
   },
 
+  gun = {
+    cooldownTime = 0.33,
+  },
+
   bullet = {
-    radius = 4,
-    speed  = 300,
+    radius = 5,
+    speed  = 400,
     life   = 1,
   },
 
@@ -24,9 +28,9 @@ local Config = {
     speed         = 150,
     acceleration  = 20,
     friction      = 0.1,
-    health        = 5,
-    spawnInterval = 3,
-    spawnCount    = 1,
+    health        = 3,
+    spawnInterval = 2.5,
+    spawnCount    = 2,
   },
 }
 
