@@ -98,21 +98,17 @@ function CollisionSystem:update(dt)
     local buckets, m = hash:bucketsFor(a)
     for bucketIndex = 1, m do
       local bucket = buckets[bucketIndex]
-      if not bucket then
-        goto skip_bucket
-      end
-
-      for j = 1, bucket.n do
-        local b = bucket[j]
-        if b ~= a
-            and a.id < b.id
-            and (circlesOverlap(a, b))
-        then
-          dispatch(a, b, self.world)
+      if bucket then
+        for j = 1, bucket.n do
+          local b = bucket[j]
+          if b ~= a
+              and a.id < b.id
+              and (circlesOverlap(a, b))
+          then
+            dispatch(a, b, self.world)
+          end
         end
       end
-
-      ::skip_bucket::
     end
   end
 end

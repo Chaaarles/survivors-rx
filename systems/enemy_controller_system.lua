@@ -17,8 +17,8 @@ function EnemyControllerSystem:process(entity, dt)
       dx = dx / distance
       dy = dy / distance
 
-      entity.vel.x = entity.vel.x + dx * entity.speed.acceleration
-      entity.vel.y = entity.vel.y + dy * entity.speed.acceleration
+      entity.vel.x = entity.vel.x + dx * entity.speed.acceleration * dt
+      entity.vel.y = entity.vel.y + dy * entity.speed.acceleration * dt
     end
   end
 end

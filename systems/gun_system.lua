@@ -55,14 +55,13 @@ function GunSystem:findClosestEnemy(x, y)
 
   for _, enemy in ipairs(self.world.entities) do
     if not enemy.enemy then
-      goto continue
+    else
+      local distance = math.sqrt((enemy.pos.x - x) ^ 2 + (enemy.pos.y - y) ^ 2)
+      if distance < closestDistance then
+        closestDistance = distance
+        closestEnemy = enemy
+      end
     end
-    local distance = math.sqrt((enemy.pos.x - x) ^ 2 + (enemy.pos.y - y) ^ 2)
-    if distance < closestDistance then
-      closestDistance = distance
-      closestEnemy = enemy
-    end
-    ::continue::
   end
 
   return closestEnemy

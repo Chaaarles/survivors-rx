@@ -20,7 +20,7 @@ end
 
 function love.load()
   math.randomseed(os.time())
-  love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
+  love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = false })
   love.window.setTitle(Config.window.title)
 
   tinyWorld = Tiny.world(

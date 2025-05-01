@@ -7,9 +7,9 @@ local Config = {
 
   player = {
     radius       = 24,
-    speed        = 300,
-    acceleration = 200,
-    friction     = 0.15,
+    speed        = 400,
+    acceleration = 6000,
+    friction     = 8,
   },
 
   gun = {
@@ -24,9 +24,9 @@ local Config = {
 
   enemy = {
     radius        = 16,
-    speed         = 150,
-    acceleration  = 20,
-    friction      = 0.1,
+    speed         = 200,
+    acceleration  = 800,
+    friction      = 5,
     health        = 3,
     spawnInterval = 2.5,
     spawnCount    = 2,

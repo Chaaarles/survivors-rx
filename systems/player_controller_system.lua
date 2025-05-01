@@ -16,8 +16,8 @@ function PlayerControllerSystem:process(entity, dt)
     dy = dy * normalizeFactor
   end
 
-  entity.vel.x = entity.vel.x + dx * entity.speed.acceleration
-  entity.vel.y = entity.vel.y + dy * entity.speed.acceleration
+  entity.vel.x = entity.vel.x + dx * entity.speed.acceleration * dt
+  entity.vel.y = entity.vel.y + dy * entity.speed.acceleration * dt
 
   -- Clamp velocity to max speed
   local speed = math.sqrt(entity.vel.x * entity.vel.x + entity.vel.y * entity.vel.y)

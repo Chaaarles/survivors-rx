@@ -20,7 +20,7 @@ end
 function EnemyHitSystem:process(entity, dt)
   if entity.hitBy.x ~= nil then
     local hitBy = entity.hitBy
-    local knockback = 400
+    local knockback = 500
 
     -- Calculate the knockback direction
     local magnitude = math.sqrt(hitBy.x * hitBy.x + hitBy.y * hitBy.y)
