@@ -19,7 +19,7 @@ end
 function Enemy:draw()
   if self.hitState > 0 then
     love.graphics.setColor(1, 1, 1)
-    love.graphics.setLineWidth(2)
+    love.graphics.setLineWidth(6)
     love.graphics.setLineStyle("rough")
     love.graphics.circle('line', self.pos.x, self.pos.y, self.collider.radius)
   end

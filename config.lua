@@ -6,11 +6,10 @@ local Config = {
   },
 
   player = {
-    radius       = 12,
+    radius       = 24,
     speed        = 300,
     acceleration = 200,
     friction     = 0.15,
-    cooldownTime = 0.4,
   },
 
   gun = {
@@ -18,13 +17,13 @@ local Config = {
   },
 
   bullet = {
-    radius = 5,
+    radius = 10,
     speed  = 400,
     life   = 1,
   },
 
   enemy = {
-    radius        = 8,
+    radius        = 16,
     speed         = 150,
     acceleration  = 20,
     friction      = 0.1,
