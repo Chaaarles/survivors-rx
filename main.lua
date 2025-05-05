@@ -20,8 +20,9 @@ end
 
 function love.load()
   math.randomseed(os.time())
-  love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = false })
+  love.window.setMode(Config.window.width, Config.window.height, { resizable = false, vsync = true })
   love.window.setTitle(Config.window.title)
+  love.graphics.setDefaultFilter("nearest")
 
   tinyWorld = Tiny.world(
     require("systems.enemy_spawner_system"),

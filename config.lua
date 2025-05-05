@@ -1,13 +1,13 @@
 local Config = {
   window = {
-    width  = 800,
-    height = 600,
+    width  = 640,
+    height = 360,
     title  = "SurvivorsRX",
   },
 
   player = {
-    radius       = 24,
-    speed        = 400,
+    radius       = 8,
+    speed        = 200,
     acceleration = 6000,
     friction     = 8,
   },
@@ -17,20 +17,24 @@ local Config = {
   },
 
   bullet = {
-    radius = 10,
+    radius = 4,
     speed  = 400,
     life   = 1,
   },
 
   enemy = {
-    radius        = 16,
-    speed         = 200,
+    radius        = 8,
+    speed         = 180,
     acceleration  = 800,
     friction      = 5,
     health        = 3,
     spawnInterval = 2.5,
     spawnCount    = 2,
   },
+
+  combat = {
+    knockback = 300,
+  }
 }
 
 return Config

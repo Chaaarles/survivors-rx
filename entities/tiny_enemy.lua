@@ -17,15 +17,17 @@ function Enemy.new(x, y)
   return self
 end
 
+local sprite = love.graphics.newImage("assets/graphics/tile_0109.png")
 function Enemy:draw()
+  local scale = 2
+  love.graphics.setColor(1, 1, 1)
   if self.hitState > 0 then
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.setLineWidth(6)
-    love.graphics.setLineStyle("rough")
-    love.graphics.circle('line', self.pos.x, self.pos.y, self.collider.radius)
+    love.graphics.setColor(1, 0.3, 0.3)
   end
-  love.graphics.setColor(0.9, 0.1, 0.1)
-  love.graphics.circle("fill", self.pos.x, self.pos.y, self.collider.radius)
+
+
+  love.graphics.draw(sprite, self.pos.x, self.pos.y, 0, scale, scale,
+    sprite:getWidth() / 2, sprite:getHeight() / 2 - 2)
 end
 
 return Enemy

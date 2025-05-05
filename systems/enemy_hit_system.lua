@@ -1,8 +1,9 @@
-local EnemyHitSystem = Tiny.processingSystem()
+local EnemyHitSystem  = Tiny.processingSystem()
 EnemyHitSystem.filter = Tiny.requireAll("enemy", "pos", "vel", "hitBy", "hitState", "health")
+local config          = require("config")
 
-local slapSound = love.audio.newSource("assets/audio/slap.mp3", "static")
-local deadSound = love.audio.newSource("assets/audio/au.mp3", "static")
+local slapSound       = love.audio.newSource("assets/audio/slap.mp3", "static")
+local deadSound       = love.audio.newSource("assets/audio/au.mp3", "static")
 
 local function playSound(sound, seek)
   seek = seek or 0
@@ -20,7 +21,7 @@ end
 function EnemyHitSystem:process(entity, dt)
   if entity.hitBy.x ~= nil then
     local hitBy = entity.hitBy
-    local knockback = 500
+    local knockback = config.combat.knockback
 
     -- Calculate the knockback direction
     local magnitude = math.sqrt(hitBy.x * hitBy.x + hitBy.y * hitBy.y)
@@ -32,7 +33,7 @@ function EnemyHitSystem:process(entity, dt)
     entity.vel.y = entity.vel.y + dy * knockback
 
     -- Set the hit state to indicate the enemy is hit
-    entity.hitState = 0.2
+    entity.hitState = 0.3
 
     -- Reduce health
     entity.health = entity.health - 1
