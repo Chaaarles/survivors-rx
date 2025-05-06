@@ -5,10 +5,10 @@ PlayerControllerSystem.filter = Tiny.requireAll('playerController')
 
 function PlayerControllerSystem:process(entity, dt)
   local dx, dy = 0, 0
-  if Input.left then dx = dx - 1 end
-  if Input.right then dx = dx + 1 end
-  if Input.up then dy = dy - 1 end
-  if Input.down then dy = dy + 1 end
+  if Input.move.left then dx = dx - 1 end
+  if Input.move.right then dx = dx + 1 end
+  if Input.move.up then dy = dy - 1 end
+  if Input.move.down then dy = dy + 1 end
 
   if dx ~= 0 and dy ~= 0 then
     local normalizeFactor = 1 / math.sqrt(2)

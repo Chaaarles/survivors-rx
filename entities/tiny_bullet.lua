@@ -3,12 +3,12 @@ local Config = require "config"
 local Bullet = {}
 Bullet.__index = Bullet
 
-function Bullet.new(x, y, angle)
+function Bullet.new(x, y, xVel, yVel)
   local self = setmetatable({}, Bullet)
   self.id = NewId()
   self.bullet = true
   self.pos = { x = x, y = y }
-  self.vel = { x = math.cos(angle) * Config.bullet.speed, y = math.sin(angle) * Config.bullet.speed }
+  self.vel = { x = xVel, y = yVel }
   self.lifeTime = Config.bullet.life
   self.collider = { type = "circle", radius = Config.bullet.radius, tag = "bullet" }
   return self

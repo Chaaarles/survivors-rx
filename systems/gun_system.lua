@@ -1,4 +1,6 @@
+local Input = require "input"
 local Bullet = require "entities.tiny_bullet"
+local config = require "config"
 
 local GunSystem = Tiny.processingSystem()
 GunSystem.filter = Tiny.requireAll("gun")
@@ -27,44 +29,35 @@ function GunSystem:process(entity, dt)
   if entity.cooldown > 0 then
     entity.cooldown = entity.cooldown - dt
   else
-    local closestEnemy = self:findClosestEnemy(PLAYER.pos.x, PLAYER.pos.y)
-    if not closestEnemy then
-      return
+    local dx, dy = 0, 0
+    if Input.shoot.left then dx = dx - 1 end
+    if Input.shoot.right then dx = dx + 1 end
+    if Input.shoot.up then dy = dy - 1 end
+    if Input.shoot.down then dy = dy + 1 end
+
+    if dx == 0 and dy == 0 then
+      return -- No shooting direction
     end
 
-    local angle = 0
-    if closestEnemy then
-      local dx = closestEnemy.pos.x - PLAYER.pos.x
-      local dy = closestEnemy.pos.y - PLAYER.pos.y
-      angle = math.atan2(dy, dx)
+    if dx ~= 0 and dy ~= 0 then
+      local normalizeFactor = 1 / math.sqrt(2)
+      dx = dx * normalizeFactor
+      dy = dy * normalizeFactor
     end
+
+    local xVel, yVel = dx * config.bullet.speed, dy * config.bullet.speed
+
+    xVel = xVel + PLAYER.vel.x * 0.5
+    yVel = yVel + PLAYER.vel.y * 0.5
 
     -- Create a bullet and add it to the world
-    local bullet = Bullet.new(PLAYER.pos.x, PLAYER.pos.y, angle)
+    local bullet = Bullet.new(PLAYER.pos.x, PLAYER.pos.y, xVel, yVel)
     Tiny.addEntity(self.world, bullet)
     entity.cooldown = entity.cooldownTime
 
     -- Play gun sound
     playRandomGunSound()
   end
-end
-
-function GunSystem:findClosestEnemy(x, y)
-  local closestEnemy = nil
-  local closestDistance = math.huge
-
-  for _, enemy in ipairs(self.world.entities) do
-    if not enemy.enemy then
-    else
-      local distance = math.sqrt((enemy.pos.x - x) ^ 2 + (enemy.pos.y - y) ^ 2)
-      if distance < closestDistance then
-        closestDistance = distance
-        closestEnemy = enemy
-      end
-    end
-  end
-
-  return closestEnemy
 end
 
 return GunSystem
