@@ -56,6 +56,17 @@ local Handlers = {
   playerEnemy = function(a, b, world)
     -- Move the enemy out of the way
     moveColliders(a, b, 0.05)
+    if a.hitBuffer == nil then
+      return
+    end
+
+    table.insert(a.hitBuffer,
+      {
+        source = b,
+        effects = {
+          { type = "damage",       value = 1 },
+          { type = "invulnerable", duration = 0.5 } }
+      })
   end,
   enemyEnemy = function(a, b, world)
     -- Move the enemies apart
@@ -63,7 +74,20 @@ local Handlers = {
   end,
   bulletEnemy = function(a, b, world)
     -- Handle bullet and enemy collision
-    b.hitBy.x, b.hitBy.y = a.vel.x, a.vel.y
+    if b.hitBuffer == nil then
+      return
+    end
+
+    table.insert(b.hitBuffer,
+      {
+        source = a,
+        effects = {
+          { type = "damage",    value = 1 },
+          { type = "knockback", x = a.vel.x,        y = a.vel.y },
+          { type = "stun",      duration = 0.3 },
+          { type = "sound",     sound = a.hitSound, seek = 0.08, pitch_variance = 0.2 },
+        }
+      })
     Tiny.removeEntity(world, a) -- Remove the bullet entity
   end,
 }

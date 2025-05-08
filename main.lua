@@ -34,11 +34,16 @@ function love.load()
     require("systems.velocity_system"),
     require("systems.friction_system"),
     require("systems.collision_system"),
-    require("systems.enemy_hit_system"),
-    require("systems.hit_state_system"),
+    require("systems.stun_system"),
+    require("systems.invulnerability_system"),
     require("systems.bullet_removal_system"),
-    require("systems.draw_system")
+    require("systems.hit_system"),
+    require("systems.killer_system"),
+    require("systems.draw_system"),
+    require("systems.draw_ui_system")
   )
+
+  tinyWorld:addEntity(require("entities.ui.health_bar").new())
 
   PLAYER = TinyPlayer.new(400, 300)
   tinyWorld:add(PLAYER)
@@ -63,9 +68,10 @@ function love.draw()
   tinyWorld:update(love.timer.getDelta, drawSystemFilter)
 
   love.graphics.setColor(1, 1, 1)
-  love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
-  love.graphics.print("entities: " .. Tiny.getEntityCount(tinyWorld), 10, 30)
-  love.graphics.print("systems: " .. Tiny.getSystemCount(tinyWorld), 10, 50)
+  love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 200)
+  love.graphics.print("entities: " .. Tiny.getEntityCount(tinyWorld), 10, 220)
+  love.graphics.print("systems: " .. Tiny.getSystemCount(tinyWorld), 10, 240)
+  love.graphics.print("player hit: " .. tostring(PLAYER.hit), 10, 260)
 end
 
 function love.keypressed(key)

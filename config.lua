@@ -10,6 +10,7 @@ local Config = {
     speed        = 200,
     acceleration = 6000,
     friction     = 8,
+    health       = 15,
   },
 
   gun = {

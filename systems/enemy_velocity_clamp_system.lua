@@ -1,8 +1,8 @@
 local EnemyVelocityClampSystem = Tiny.processingSystem()
-EnemyVelocityClampSystem.filter = Tiny.requireAll('enemy', 'vel', 'speed', 'hitState')
+EnemyVelocityClampSystem.filter = Tiny.requireAll('enemy', 'vel', 'speed', 'stun')
 
 function EnemyVelocityClampSystem:process(entity, dt)
-  if (entity.hitState > 0) then
+  if (entity.stun.value > 0) then
     -- Skips processing if the entity is in a hit state.
     -- Knockback should not be clamped.
     return

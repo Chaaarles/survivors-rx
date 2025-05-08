@@ -1,7 +1,9 @@
-local Config = require "config"
+local Config    = require "config"
 
-local Bullet = {}
-Bullet.__index = Bullet
+local Bullet    = {}
+Bullet.__index  = Bullet
+
+local slapSound = love.audio.newSource("assets/audio/slap.mp3", "static")
 
 function Bullet.new(x, y, xVel, yVel)
   local self = setmetatable({}, Bullet)
@@ -11,6 +13,7 @@ function Bullet.new(x, y, xVel, yVel)
   self.vel = { x = xVel, y = yVel }
   self.lifeTime = Config.bullet.life
   self.collider = { type = "circle", radius = Config.bullet.radius, tag = "bullet" }
+  self.hitSound = slapSound
   return self
 end
 

@@ -1,4 +1,5 @@
 local Config = require "config"
+local Input = require "input"
 local Player = {}
 Player.__index = Player
 
@@ -13,6 +14,9 @@ function Player.new(x, y)
   self.cooldownTime = Config.player.cooldownTime
   self.cooldown = 0
   self.collider = { type = "circle", radius = Config.player.radius, tag = "player" }
+  self.health = { value = Config.player.health, max = Config.player.health }
+  self.hitBuffer = {}
+  self.invulnerable = { value = 0 }
   return self
 end
 
@@ -27,26 +31,21 @@ function Player:draw()
     king:getWidth() / 2, (king:getHeight() / 2) + 2)
 
   local scale = self.collider.radius / gun:getWidth() * 3
-  local xFactor = 1
-  local angle = math.atan2(self.vel.y, self.vel.x)
 
-  local angleClamper = 5
-  if angle >= math.pi / angleClamper and angle <= math.pi / 2 then
-    angle = math.pi / angleClamper
-  elseif angle > math.pi / 2 and angle <= math.pi - math.pi / angleClamper then
-    angle = math.pi - math.pi / angleClamper
-  elseif angle < -math.pi / angleClamper and angle >= -math.pi / 2 then
-    angle = -math.pi / angleClamper
-  elseif angle < -math.pi / 2 and angle > -math.pi + math.pi / angleClamper then
-    angle = -math.pi + math.pi / angleClamper
-  end
+  local gunX, gunY = 0, 0
+  if Input.shoot.left then gunX = gunX - 1 end
+  if Input.shoot.right then gunX = gunX + 1 end
+  if Input.shoot.up then gunY = gunY - 1 end
+  if Input.shoot.down then gunY = gunY + 1 end
 
+  local angle = math.atan2(gunY, gunX)
 
   -- Draw the sprite tangential to circle
   local xOffset = math.cos(angle) * (self.collider.radius * 0.7 + gun:getWidth() / 2 * scale)
   local yOffset = math.sin(angle) * (self.collider.radius * 0.7 + gun:getWidth() / 2 * scale)
 
-  if self.vel.x < 0 then
+  local xFactor = 1
+  if gunX < 0 then
     xFactor = -1
     angle = angle + math.pi
   end

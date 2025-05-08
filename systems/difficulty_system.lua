@@ -13,8 +13,6 @@ function DifficultySystem:process(entity, dt)
   entity.difficultyTimer = entity.difficultyTimer - interval
   entity.spawnInterval = entity.spawnInterval * 0.95 -- Increase spawn rate by 5%
   entity.spawnCount = entity.spawnCount * 1.15       -- Increase enemy speed by 15%
-
-  print("Difficulty increased! Spawn interval: " .. entity.spawnInterval .. ", Spawn count: " .. entity.spawnCount)
 end
 
 return DifficultySystem

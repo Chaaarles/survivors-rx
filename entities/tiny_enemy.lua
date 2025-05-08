@@ -11,9 +11,10 @@ function Enemy.new(x, y)
   self.speed = { max = Config.enemy.speed, acceleration = Config.enemy.acceleration }
   self.friction = Config.enemy.friction
   self.collider = { type = "circle", radius = Config.enemy.radius, tag = "enemy" }
-  self.hitState = 0
+  self.stun = { value = 0 }
   self.hitBy = { x = nil, y = nil }
-  self.health = Config.enemy.health
+  self.health = { value = Config.enemy.health }
+  self.hitBuffer = {}
   return self
 end
 
@@ -21,7 +22,7 @@ local sprite = love.graphics.newImage("assets/graphics/tile_0109.png")
 function Enemy:draw()
   local scale = 2
   love.graphics.setColor(1, 1, 1)
-  if self.hitState > 0 then
+  if self.stun.value > 0 then
     love.graphics.setColor(1, 0.3, 0.3)
   end
 

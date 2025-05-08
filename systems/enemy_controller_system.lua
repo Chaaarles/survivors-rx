@@ -1,9 +1,9 @@
 local EnemyControllerSystem = Tiny.processingSystem()
-EnemyControllerSystem.filter = Tiny.requireAll('enemy', 'pos', 'vel', 'speed', 'hitState')
+EnemyControllerSystem.filter = Tiny.requireAll('enemy', 'pos', 'vel', 'speed', 'stun')
 
 function EnemyControllerSystem:process(entity, dt)
   -- Simple AI logic to move towards the player
-  if entity.hitState > 0 then
+  if entity.stun.value > 0 then
     -- Skips processing if the entity is in a hit state.
     return
   end
