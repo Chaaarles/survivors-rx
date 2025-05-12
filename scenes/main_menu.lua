@@ -13,7 +13,7 @@ MainMenu.__index = MainMenu
 function MainMenu.load()
   TinyWorld:clearEntities()
 
-  local titleFont = love.graphics.newFont("assets/fonts/KenneyBold.ttf", 48)
+  local titleFont = love.graphics.newFont("assets/fonts/Righteous-Regular.ttf", 50)
   local titleText = Text.new(
     love.graphics.getWidth() / 2,
     10,
@@ -25,7 +25,7 @@ function MainMenu.load()
   )
   TinyWorld:addEntity(titleText)
 
-  local buttonFont = love.graphics.newFont("assets/fonts/KenneyBold.ttf", 24)
+  local buttonFont = love.graphics.newFont("assets/fonts/Righteous-Regular.ttf", 24)
   local buttonPaddingX = 8
   local buttonPaddingY = 4
   local buttonColor = { 1, 1, 1 }
