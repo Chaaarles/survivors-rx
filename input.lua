@@ -16,7 +16,8 @@ function Input.update()
   Input.shoot.down             = love.keyboard.isDown("down")
 
   Input.mouse.x, Input.mouse.y = love.mouse.getPosition()
-  Input.mouse.click            = love.mouse.isDown(1)
+  Input.mouse.click            = love.mouse.isDown(1) and not Input.mouse.pressed
+  Input.mouse.pressed          = love.mouse.isDown(1)
 end
 
 return Input
